@@ -16,6 +16,7 @@ namespace CredentialManagement
         static SecurityPermission _unmanagedCodePermission;
 
         CredentialType _type;
+        StringFormat _format;
         string _target;
         SecureString _password;
         string _username;
@@ -51,6 +52,11 @@ namespace CredentialManagement
         }
 
         public Credential(string username, string password, string target, CredentialType type)
+            : this(username, password, target, type, StringFormat.Unicode)
+        {
+        }
+
+        public Credential(string username, string password, string target, CredentialType type, StringFormat format)
         {
             Username = username;
             Password = password;
@@ -197,6 +203,21 @@ namespace CredentialManagement
             }
         }
 
+        public StringFormat Format 
+        {
+            get
+            {
+                CheckNotDisposed();
+                return _format;
+            }
+            set
+            {
+                CheckNotDisposed();
+                _format = value;
+            }
+        }
+
+
         public PersistanceType PersistanceType
         {
             get
@@ -216,7 +237,8 @@ namespace CredentialManagement
             CheckNotDisposed();
             _unmanagedCodePermission.Demand();
 
-            byte[] passwordBytes = Encoding.Unicode.GetBytes(Password);
+            var FormatProvider = StringFormatProvider.GetProvider(Format);
+            byte[] passwordBytes = FormatProvider.GetBytes(Password);
             if (Password.Length > (512))
             {
                 throw new ArgumentOutOfRangeException("The password has exceeded 512 bytes.");
@@ -225,7 +247,7 @@ namespace CredentialManagement
             NativeMethods.CREDENTIAL credential = new NativeMethods.CREDENTIAL();
             credential.TargetName = Target;
             credential.UserName = Username;
-            credential.CredentialBlob = Marshal.StringToCoTaskMemUni(Password);
+            credential.CredentialBlob = FormatProvider.StringToCoTaskMem(Password);
             credential.CredentialBlobSize = passwordBytes.Length;
             credential.Comment = Description;
             credential.Type = (int)Type;
@@ -295,7 +317,7 @@ namespace CredentialManagement
             Username = credential.UserName;
             if (credential.CredentialBlobSize > 0)
             {
-                Password = Marshal.PtrToStringUni(credential.CredentialBlob, credential.CredentialBlobSize / 2);
+                Password = StringFormatProvider.GetProvider(Format).PtrToString(credential.CredentialBlob, credential.CredentialBlobSize);
             }
             Target = credential.TargetName;
             Type = (CredentialType)credential.Type;
