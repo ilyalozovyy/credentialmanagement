@@ -1,19 +1,15 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Permissions;
 using System.Text;
 
 namespace CredentialManagement
 {
-    public class Credential: IDisposable
+    public class Credential : IDisposable
     {
 
-        static object _lockObject = new object();
         bool _disposed;
 
-        static SecurityPermission _unmanagedCodePermission;
 
         CredentialType _type;
         string _target;
@@ -25,10 +21,6 @@ namespace CredentialManagement
 
         static Credential()
         {
-            lock (_lockObject)
-            {
-                _unmanagedCodePermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
-            }
         }
         public Credential()
             : this(null)
@@ -95,7 +87,8 @@ namespace CredentialManagement
         }
 
 
-        public string Username {
+        public string Username
+        {
             get
             {
                 CheckNotDisposed();
@@ -124,7 +117,6 @@ namespace CredentialManagement
             get
             {
                 CheckNotDisposed();
-                _unmanagedCodePermission.Demand();
                 return null == _password ? new SecureString() : _password.Copy();
             }
             set
@@ -173,8 +165,8 @@ namespace CredentialManagement
                 return LastWriteTimeUtc.ToLocalTime();
             }
         }
-        public DateTime LastWriteTimeUtc 
-        { 
+        public DateTime LastWriteTimeUtc
+        {
             get
             {
                 CheckNotDisposed();
@@ -214,7 +206,6 @@ namespace CredentialManagement
         public bool Save()
         {
             CheckNotDisposed();
-            _unmanagedCodePermission.Demand();
 
             byte[] passwordBytes = Encoding.Unicode.GetBytes(Password);
             if (Password.Length > (512))
@@ -229,7 +220,7 @@ namespace CredentialManagement
             credential.CredentialBlobSize = passwordBytes.Length;
             credential.Comment = Description;
             credential.Type = (int)Type;
-            credential.Persist = (int) PersistanceType;
+            credential.Persist = (int)PersistanceType;
 
             bool result = NativeMethods.CredWrite(ref credential, 0);
             if (!result)
@@ -243,7 +234,6 @@ namespace CredentialManagement
         public bool Delete()
         {
             CheckNotDisposed();
-            _unmanagedCodePermission.Demand();
 
             if (string.IsNullOrEmpty(Target))
             {
@@ -258,7 +248,6 @@ namespace CredentialManagement
         public bool Load()
         {
             CheckNotDisposed();
-            _unmanagedCodePermission.Demand();
 
             IntPtr credPointer;
 
@@ -277,7 +266,6 @@ namespace CredentialManagement
         public bool Exists()
         {
             CheckNotDisposed();
-            _unmanagedCodePermission.Demand();
 
             if (string.IsNullOrEmpty(Target))
             {

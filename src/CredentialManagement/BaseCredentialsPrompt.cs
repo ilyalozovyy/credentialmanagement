@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Security;
-using System.Security.Permissions;
 
 namespace CredentialManagement
 {
@@ -10,8 +9,6 @@ namespace CredentialManagement
         #region Fields
 
         bool _disposed;
-        static SecurityPermission _unmanagedCodePermission;
-        static object _lockObject = new object();
 
         string _username;
         SecureString _password;
@@ -29,10 +26,7 @@ namespace CredentialManagement
 
         static BaseCredentialsPrompt()
         {
-            lock (_lockObject)
-            {
-                _unmanagedCodePermission = new SecurityPermission(SecurityPermissionFlag.UnmanagedCode);
-            }
+
         }
 
         #endregion
@@ -209,7 +203,6 @@ namespace CredentialManagement
             get
             {
                 CheckNotDisposed();
-                _unmanagedCodePermission.Demand();
                 return null == _password ? new SecureString() : _password.Copy();
             }
             set

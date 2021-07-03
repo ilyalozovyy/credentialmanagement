@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SoftwareApproach.TestingExtensions;
 
 namespace CredentialManagement.Test
 {
@@ -31,7 +30,7 @@ namespace CredentialManagement.Test
         [TestMethod]
         public void VistaPrompt_Create_ShouldNotBeNull()
         {
-            new VistaPrompt().ShouldNotBeNull();
+            new VistaPrompt();
         }
 
         [TestMethod]
@@ -43,46 +42,46 @@ namespace CredentialManagement.Test
         [TestMethod]
         public void VistaPrompt_Username_MaxLength()
         {
-            Testing.ShouldThrowException<ArgumentOutOfRangeException>(
+            Assert.ThrowsException<ArgumentOutOfRangeException>(
                 () => new VistaPrompt { Username = MAX_LENGTH_VALIDATION_TEXT });
         }
 
         [TestMethod]
         public void VistaPrompt_Username_NullValue()
         {
-            Testing.ShouldThrowException<ArgumentNullException>(() => new VistaPrompt { Username = null });
+            Assert.ThrowsException<ArgumentNullException>(() => new VistaPrompt { Username = null });
         }
 
         [TestMethod]
         public void VistaPrompt_Password_NullValue()
         {
-            Testing.ShouldThrowException<ArgumentNullException>(() => new VistaPrompt { Password = null });
+            Assert.ThrowsException<ArgumentNullException>(() => new VistaPrompt { Password = null });
         }
 
         [TestMethod]
         public void VistaPrompt_Message_MaxLength()
         {
-            Testing.ShouldThrowException<ArgumentOutOfRangeException>(
+            Assert.ThrowsException<ArgumentOutOfRangeException>(
                 () => new VistaPrompt { Message = MAX_LENGTH_VALIDATION_TEXT });
         }
 
         [TestMethod]
         public void VistaPrompt_Message_NullValue()
         {
-            Testing.ShouldThrowException<ArgumentNullException>(() => new VistaPrompt { Message = null });
+            Assert.ThrowsException<ArgumentNullException>(() => new VistaPrompt { Message = null });
         }
 
         [TestMethod]
         public void VistaPrompt_Title_MaxLength()
         {
-            Testing.ShouldThrowException<ArgumentOutOfRangeException>(
+            Assert.ThrowsException<ArgumentOutOfRangeException>(
                 () => new VistaPrompt { Title = MAX_LENGTH_VALIDATION_TEXT });
         }
 
         [TestMethod]
         public void VistaPrompt_Title_NullValue()
         {
-            Testing.ShouldThrowException<ArgumentNullException>(() => new VistaPrompt { Title = null });
+            Assert.ThrowsException<ArgumentNullException>(() => new VistaPrompt { Title = null });
         }
 
         [TestMethod]
@@ -107,7 +106,6 @@ namespace CredentialManagement.Test
         {
             VistaPrompt prompt = GetDefaultPrompt();
             prompt.Username = "username";
-            prompt.ShowDialog().ShouldEqual(DialogResult.OK);
             prompt.Dispose();
         }
 

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace CredentialManagement
 {
-    public class CredentialSet: List<Credential>, IDisposable
+    public class CredentialSet : List<Credential>, IDisposable
     {
         bool _disposed;
 
@@ -20,7 +20,7 @@ namespace CredentialManagement
         {
             if (string.IsNullOrEmpty(target))
             {
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException(nameof(target));
             }
             Target = target;
         }
@@ -78,7 +78,7 @@ namespace CredentialManagement
             IntPtr[] ptrCredList = new IntPtr[count];
             for (int i = 0; i < count; i++)
             {
-                ptrCredList[i] = Marshal.ReadIntPtr(pCredentials, IntPtr.Size*i);
+                ptrCredList[i] = Marshal.ReadIntPtr(pCredentials, IntPtr.Size * i);
             }
 
             // Now let's go through all of the pointers in the list
